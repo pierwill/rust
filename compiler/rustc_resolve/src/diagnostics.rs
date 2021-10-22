@@ -1102,11 +1102,25 @@ impl<'a> Resolver<'a> {
             );
         }
         let msg = match suggestion.target {
-            SuggestionTarget::SimilarlyNamed => format!(
-                "{} {} with a similar name exists",
-                suggestion.res.article(),
-                suggestion.res.descr()
-            ),
+            SuggestionTarget::SimilarlyNamed => {
+                // rustc_ast::ast::ExprKind::Index // An indexing operation (e.g., foo[2]).
+                // rustc_hir::ExprKind::Index // An indexing operation (foo[2]).
+                // rustc_hir::hir::ExprKind::Index // An indexing operation (foo[2]).
+
+                // I just want to know if the target (yes?) is an index!
+
+                // check types!
+                // check types in all situations?
+                // check type if it's trying to suggest an index?
+                // what other times might we get this wrong?
+                {
+                    format!(
+                        "{} {} with a similar name exists",
+                        suggestion.res.article(),
+                        suggestion.res.descr()
+                    )
+                }
+            }
             SuggestionTarget::SingleItem => {
                 format!("maybe you meant this {}", suggestion.res.descr())
             }
