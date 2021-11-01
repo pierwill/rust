@@ -590,13 +590,13 @@ impl<T: Idx> SparseBitSet<T> {
 
     fn contains(&self, elem: T) -> bool {
         assert!(elem.index() < self.domain_size);
-        self.elems.contains(&elem)
+        self.elems.iter().any(|e| elem.index() == e.index())
     }
 
     fn insert(&mut self, elem: T) -> bool {
         assert!(elem.index() < self.domain_size);
-        let changed = if let Some(i) = self.elems.iter().position(|&e| e >= elem) {
-            if self.elems[i] == elem {
+        let changed = if let Some(i) = self.elems.iter().position(|&e| e.index() >= elem.index()) {
+            if self.elems[i].index() == elem.index() {
                 // `elem` is already in the set.
                 false
             } else {
@@ -615,7 +615,7 @@ impl<T: Idx> SparseBitSet<T> {
 
     fn remove(&mut self, elem: T) -> bool {
         assert!(elem.index() < self.domain_size);
-        if let Some(i) = self.elems.iter().position(|&e| e == elem) {
+        if let Some(i) = self.elems.iter().position(|&e| e.index() == elem.index()) {
             self.elems.remove(i);
             true
         } else {
@@ -1121,7 +1121,7 @@ impl<R: Idx, C: Idx> SparseBitMatrix<R, C> {
     /// `write` can reach everything that `read` can (and
     /// potentially more).
     pub fn union_rows(&mut self, read: R, write: R) -> bool {
-        if read == write || self.row(read).is_none() {
+        if read.index() == write.index() || self.row(read).is_none() {
             return false;
         }
 
