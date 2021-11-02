@@ -32,6 +32,10 @@ impl HirId {
     pub fn make_owner(owner: LocalDefId) -> Self {
         Self { owner, local_id: ItemLocalId::from_u32(0) }
     }
+
+    pub fn index(self) -> (usize, usize) {
+        (rustc_index::vec::Idx::index(self.owner), rustc_index::vec::Idx::index(self.local_id))
+    }
 }
 
 impl fmt::Display for HirId {
