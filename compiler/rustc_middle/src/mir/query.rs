@@ -358,7 +358,7 @@ pub enum ConstraintCategory {
     Internal,
 }
 
-#[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord, Hash)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Hash, PartialOrd, Ord)]
 #[derive(TyEncodable, TyDecodable, HashStable)]
 pub enum ReturnConstraint {
     Normal,
