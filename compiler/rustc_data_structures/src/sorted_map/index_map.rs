@@ -97,7 +97,7 @@ impl<I: Idx, K: Eq, V: Eq> Eq for SortedIndexMultiMap<I, K, V> {}
 impl<I: Idx, K: PartialEq, V: PartialEq> PartialEq for SortedIndexMultiMap<I, K, V> {
     fn eq(&self, other: &Self) -> bool {
         // No need to compare the sorted index. If the items are the same, the index will be too.
-        self.items == other.items
+        self == other
     }
 }
 

@@ -419,7 +419,7 @@ where
 
         // Move the stack to a local variable. We want to utilize the existing allocation and
         // mutably borrow it without borrowing self at the same time.
-        let mut successors_stack = core::mem::take(&mut self.successors_stack);
+        let mut successors_stack: Vec<S> = core::mem::take(&mut self.successors_stack);
         debug_assert_eq!(successors_stack.len(), 0);
 
         let mut stack: Vec<VisitingNodeFrame<G, _>> = vec![VisitingNodeFrame {
@@ -524,7 +524,7 @@ where
 
             // Completed walk, remove `node` from the stack.
             let r = self.node_stack.pop();
-            debug_assert_eq!(r, Some(node));
+            debug_assert_eq!(r.unwrap().index(), node.index());
 
             // Remove the frame, it's done.
             let frame = stack.pop().unwrap();
