@@ -1114,7 +1114,10 @@ impl<'a, 'tcx> FnCtxt<'a, 'tcx> {
             }
 
             let mut capture_diagnostic = capture_diagnostic.into_iter().collect::<Vec<_>>();
-            capture_diagnostic.sort();
+            capture_diagnostic.sort_by_key(|c| {
+                let (o, s) = c.clone();
+                (o.unwrap().index(), s)
+            });
             for captured_info in capture_diagnostic.iter() {
                 // Get the auto trait reasons of why migration is needed because of that capture, if there are any
                 let capture_trait_reasons =
