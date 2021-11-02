@@ -358,6 +358,27 @@ pub enum ConstraintCategory {
     Internal,
 }
 
+impl Ord for ConstraintCategory {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        let s = match self {
+            Self::ClosureUpvar(hir_id) => (Some(hir_id.index()), self),
+            _ => (None, self),
+        };
+        let o = match other {
+            Self::ClosureUpvar(hir_id) => (Some(hir_id.index()), other),
+            _ => (None, other),
+        };
+
+        s.cmp(&o)
+    }
+}
+
+impl PartialOrd for ConstraintCategory {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(&other))
+    }
+}
+
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
 #[derive(TyEncodable, TyDecodable, HashStable)]
 pub enum ReturnConstraint {
