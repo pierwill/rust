@@ -21,7 +21,7 @@ pub fn dominators<G: ControlFlowGraph>(graph: G) -> Dominators<G::Node> {
 
 fn dominators_given_rpo<G: ControlFlowGraph>(graph: G, rpo: &[G::Node]) -> Dominators<G::Node> {
     let start_node = graph.start_node();
-    assert_eq!(rpo[0], start_node);
+    assert_eq!(rpo[0].index(), start_node.index());
 
     // compute the post order index (rank) for each node
     let mut post_order_rank = IndexVec::from_elem_n(0, graph.num_nodes());
@@ -49,7 +49,9 @@ fn dominators_given_rpo<G: ControlFlowGraph>(graph: G, rpo: &[G::Node]) -> Domin
                 }
             }
 
-            if new_idom != immediate_dominators[node] {
+            if new_idom.clone().unwrap().index()
+                != immediate_dominators[node].clone().unwrap().index()
+            {
                 immediate_dominators[node] = new_idom;
                 changed = true;
             }
@@ -65,7 +67,7 @@ fn intersect<Node: Idx>(
     mut node1: Node,
     mut node2: Node,
 ) -> Node {
-    while node1 != node2 {
+    while node1.index() != node2.index() {
         while post_order_rank[node1] < post_order_rank[node2] {
             node1 = immediate_dominators[node1].unwrap();
         }
@@ -105,7 +107,7 @@ impl<Node: Idx> Dominators<Node> {
 
     pub fn is_dominated_by(&self, node: Node, dom: Node) -> bool {
         // FIXME -- could be optimized by using post-order-rank
-        self.dominators(node).any(|n| n == dom)
+        self.dominators(node).any(|n| n.index() == dom.index())
     }
 
     /// Provide deterministic ordering of nodes such that, if any two nodes have a dominator
@@ -128,7 +130,7 @@ impl<'dom, Node: Idx> Iterator for Iter<'dom, Node> {
     fn next(&mut self) -> Option<Self::Item> {
         if let Some(node) = self.node {
             let dom = self.dominators.immediate_dominator(node);
-            if dom == node {
+            if dom.index() == node.index() {
                 self.node = None; // reached the root
             } else {
                 self.node = Some(dom);

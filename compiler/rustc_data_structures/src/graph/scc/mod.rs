@@ -311,7 +311,7 @@ where
                     // We test this, to be extremely sure that we never
                     // ever break our termination condition for the
                     // reverse iteration loop.
-                    assert!(node != parent, "Node can not be in cycle with itself");
+                    assert!(node.index() != parent.index(), "Node can not be in cycle with itself");
                     // Store the previous node as an inverted list link
                     self.node_states[node] = NodeState::InCycleWith { parent: previous_node };
                     // Update to parent node.
@@ -359,7 +359,7 @@ where
         // will know when we hit the state where previous_node == node.
         loop {
             // Back at the beginning, we can return.
-            if previous_node == node {
+            if previous_node.index() == node.index() {
                 return node_state;
             }
             // Update to previous node in the link.
