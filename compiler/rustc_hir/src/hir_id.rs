@@ -1,4 +1,5 @@
 use crate::def_id::{LocalDefId, CRATE_DEF_INDEX};
+use std::cmp::Ordering;
 use std::fmt;
 
 /// Uniquely identifies a node in the HIR of the current crate. It is
@@ -16,6 +17,22 @@ use std::fmt;
 pub struct HirId {
     pub owner: LocalDefId,
     pub local_id: ItemLocalId,
+}
+
+impl Ord for HirId {
+    fn cmp(&self, other: &Self) -> Ordering {
+        (self.owner.local_def_index, self.local_id)
+            .cmp(&(other.owner.local_def_index, other.local_id))
+    }
+}
+
+impl PartialOrd for HirId {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(
+            (self.owner.local_def_index, self.local_id)
+                .cmp(&(other.owner.local_def_index, other.local_id)),
+        )
+    }
 }
 
 impl HirId {
