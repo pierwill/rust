@@ -354,7 +354,7 @@ impl<'tcx> CodegenUnit<'tcx> {
     ) -> Vec<(MonoItem<'tcx>, (Linkage, Visibility))> {
         // The codegen tests rely on items being process in the same order as
         // they appear in the file, so for local items, we sort by node_id first
-        #[derive(PartialEq, Eq, PartialOrd, Ord)]
+        #[derive(PartialEq, Eq)]
         pub struct ItemSortKey<'tcx>(Option<HirId>, SymbolName<'tcx>);
 
         fn item_sort_key<'tcx>(tcx: TyCtxt<'tcx>, item: MonoItem<'tcx>) -> ItemSortKey<'tcx> {

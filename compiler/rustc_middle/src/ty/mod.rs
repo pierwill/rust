@@ -2134,7 +2134,7 @@ pub struct CrateInherentImpls {
     pub inherent_impls: LocalDefIdMap<Vec<DefId>>,
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, TyEncodable, HashStable)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash, TyEncodable, HashStable)]
 pub struct SymbolName<'tcx> {
     /// `&str` gives a consistent ordering, which ensures reproducible builds.
     pub name: &'tcx str,
