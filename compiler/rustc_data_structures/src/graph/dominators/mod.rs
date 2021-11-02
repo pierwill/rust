@@ -49,9 +49,7 @@ fn dominators_given_rpo<G: ControlFlowGraph>(graph: G, rpo: &[G::Node]) -> Domin
                 }
             }
 
-            if new_idom.clone().unwrap().index()
-                != immediate_dominators[node].clone().unwrap().index()
-            {
+            if new_idom != immediate_dominators[node] {
                 immediate_dominators[node] = new_idom;
                 changed = true;
             }
