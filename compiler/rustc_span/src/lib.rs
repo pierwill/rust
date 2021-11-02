@@ -442,7 +442,22 @@ pub struct SpanData {
 
 impl Ord for SpanData {
     fn cmp(&self, other: &Self) -> Ordering {
-        (self.lo, self.hi, self.ctxt).cmp(&(other.lo, other.hi, other.ctxt))
+        let SpanData {
+            lo: s_lo,
+            hi: s_hi,
+            ctxt: s_ctxt,
+            // `HirId` does not implement `Ord`.
+            parent: _,
+        } = self;
+        let SpanData {
+            lo: o_lo,
+            hi: o_hi,
+            ctxt: o_ctxt,
+            // `HirId` does not implement `Ord`.
+            parent: _,
+        } = other;
+
+        (s_lo, s_hi, s_ctxt).cmp(&(o_lo, o_hi, o_ctxt))
     }
 }
 
