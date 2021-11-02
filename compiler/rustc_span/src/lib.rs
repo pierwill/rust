@@ -430,7 +430,7 @@ impl FileName {
 /// `SpanData` is public because `Span` uses a thread-local interner and can't be
 /// sent to other threads, but some pieces of performance infra run in a separate thread.
 /// Using `Span` is generally preferred.
-#[derive(Clone, Copy, Hash, PartialEq, Eq, Ord, PartialOrd)]
+#[derive(Clone, Copy, Hash, PartialEq, Eq)]
 pub struct SpanData {
     pub lo: BytePos,
     pub hi: BytePos,
@@ -438,6 +438,18 @@ pub struct SpanData {
     /// code was created by a macro expansion.
     pub ctxt: SyntaxContext,
     pub parent: Option<LocalDefId>,
+}
+
+impl Ord for SpanData {
+    fn cmp(&self, other: &Self) -> Ordering {
+        (self.lo, self.hi, self.ctxt).cmp(&(other.lo, other.hi, other.ctxt))
+    }
+}
+
+impl PartialOrd for SpanData {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some((self.lo, self.hi, self.ctxt).cmp(&(other.lo, other.hi, other.ctxt)))
+    }
 }
 
 impl SpanData {
