@@ -448,7 +448,7 @@ impl Ord for SpanData {
 
 impl PartialOrd for SpanData {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some((self.lo, self.hi, self.ctxt).cmp(&(other.lo, other.hi, other.ctxt)))
+        Some(self.cmp(other))
     }
 }
 
