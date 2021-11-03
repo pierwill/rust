@@ -358,6 +358,7 @@ pub enum ConstraintCategory {
     Internal,
 }
 
+// This is needed because `HirId` does not implement `Ord`.
 impl Ord for ConstraintCategory {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         let s = match self {
@@ -384,6 +385,28 @@ impl PartialOrd for ConstraintCategory {
 pub enum ReturnConstraint {
     Normal,
     ClosureUpvar(hir::HirId),
+}
+
+// This is needed because `HirId` does not implement `Ord`.
+impl Ord for ReturnConstraint {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        let s = match self {
+            &Self::Normal => None,
+            &Self::ClosureUpvar(h) => Some(h.index()),
+        };
+        let o = match other {
+            &Self::Normal => None,
+            &Self::ClosureUpvar(h) => Some(h.index()),
+        };
+
+        s.cmp(&o)
+    }
+}
+
+impl PartialOrd for ReturnConstraint {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(&other))
+    }
 }
 
 /// The subject of a `ClosureOutlivesRequirement` -- that is, the thing
