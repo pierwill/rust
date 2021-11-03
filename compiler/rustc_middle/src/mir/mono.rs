@@ -355,7 +355,7 @@ impl<'tcx> CodegenUnit<'tcx> {
         // The codegen tests rely on items being process in the same order as
         // they appear in the file, so for local items, we sort by node_id first
         #[derive(PartialEq, Eq, PartialOrd, Ord)]
-        pub struct ItemSortKey<'tcx>(Option<usize>, SymbolName<'tcx>);
+        pub struct ItemSortKey<'tcx>(Option<(usize, usize)>, SymbolName<'tcx>);
 
         fn item_sort_key<'tcx>(tcx: TyCtxt<'tcx>, item: MonoItem<'tcx>) -> ItemSortKey<'tcx> {
             ItemSortKey(
@@ -366,7 +366,13 @@ impl<'tcx> CodegenUnit<'tcx> {
                             // instances into account. The others don't matter for
                             // the codegen tests and can even make item order
                             // unstable.
-                            InstanceDef::Item(def) => Some(def.did.index.as_usize()),
+                            InstanceDef::Item(def) => Some(
+                                def.did
+                                    .as_local()
+                                    .map(|def_id| tcx.hir().local_def_id_to_hir_id(def_id))
+                                    .unwrap()
+                                    .index(),
+                            ),
                             InstanceDef::VtableShim(..)
                             | InstanceDef::ReifyShim(..)
                             | InstanceDef::Intrinsic(..)
@@ -377,10 +383,14 @@ impl<'tcx> CodegenUnit<'tcx> {
                             | InstanceDef::CloneShim(..) => None,
                         }
                     }
-                    MonoItem::Static(def_id) => Some(def_id.index.as_usize()),
-                    MonoItem::GlobalAsm(item_id) => {
-                        Some(item_id.def_id.to_def_id().index.as_usize())
-                    }
+                    MonoItem::Static(def_id) => Some(
+                        def_id
+                            .as_local()
+                            .map(|def_id| tcx.hir().local_def_id_to_hir_id(def_id))
+                            .unwrap()
+                            .index(),
+                    ),
+                    MonoItem::GlobalAsm(item_id) => Some(item_id.hir_id().index()),
                 },
                 item.symbol_name(tcx),
             )
