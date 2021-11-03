@@ -361,12 +361,12 @@ pub enum ConstraintCategory {
 impl Ord for ConstraintCategory {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         let s = match self {
-            Self::ClosureUpvar(hir_id) => (Some(hir_id.index()), self),
-            _ => (None, self),
+            Self::ClosureUpvar(hir_id) => Some(hir_id.index()),
+            _ => None,
         };
         let o = match other {
-            Self::ClosureUpvar(hir_id) => (Some(hir_id.index()), other),
-            _ => (None, other),
+            Self::ClosureUpvar(hir_id) => Some(hir_id.index()),
+            _ => None,
         };
 
         s.cmp(&o)
