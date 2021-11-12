@@ -2,7 +2,7 @@ use crate::rmeta::def_path_hash_map::DefPathHashMapRef;
 use crate::rmeta::table::{FixedSizeEncoding, TableBuilder};
 use crate::rmeta::*;
 
-use rustc_data_structures::fx::{FxHashMap, FxIndexSet};
+use rustc_data_structures::fx::{FxHashMap, FxIndexMap, FxIndexSet};
 use rustc_data_structures::stable_hasher::StableHasher;
 use rustc_data_structures::sync::{join, par_iter, Lrc, ParallelIterator};
 use rustc_hir as hir;
@@ -1286,7 +1286,7 @@ impl EncodeContext<'a, 'tcx> {
             return;
         }
 
-        let mut keys_and_jobs = self
+        let keys_and_jobs = self
             .tcx
             .mir_keys(())
             .iter()
@@ -1299,8 +1299,6 @@ impl EncodeContext<'a, 'tcx> {
                 }
             })
             .collect::<Vec<_>>();
-        // Sort everything to ensure a stable order for diagnotics.
-        keys_and_jobs.sort_by_key(|&(def_id, _, _)| def_id.index());
         for (def_id, encode_const, encode_opt) in keys_and_jobs.into_iter() {
             debug_assert!(encode_const || encode_opt);
 
@@ -1782,7 +1780,7 @@ impl EncodeContext<'a, 'tcx> {
         empty_proc_macro!(self);
         debug!("EncodeContext::encode_impls()");
         let tcx = self.tcx;
-        let mut visitor = ImplVisitor { tcx, impls: FxHashMap::default() };
+        let mut visitor = ImplVisitor { tcx, impls: FxIndexMap::default() };
         tcx.hir().visit_all_item_likes(&mut visitor);
 
         let mut all_impls: Vec<_> = visitor.impls.into_iter().collect();
@@ -2029,7 +2027,7 @@ impl EncodeContext<'a, 'tcx> {
 
 struct ImplVisitor<'tcx> {
     tcx: TyCtxt<'tcx>,
-    impls: FxHashMap<DefId, Vec<(DefIndex, Option<ty::fast_reject::SimplifiedType>)>>,
+    impls: FxIndexMap<DefId, Vec<(DefIndex, Option<ty::fast_reject::SimplifiedType>)>>,
 }
 
 impl<'tcx, 'v> ItemLikeVisitor<'v> for ImplVisitor<'tcx> {
