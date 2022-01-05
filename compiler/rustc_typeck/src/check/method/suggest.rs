@@ -20,7 +20,7 @@ use rustc_trait_selection::traits::{
     FulfillmentError, Obligation, ObligationCause, ObligationCauseCode,
 };
 
-use std::cmp::Ordering;
+// use std::cmp::Ordering;
 use std::iter;
 
 use super::probe::Mode;
@@ -88,7 +88,8 @@ impl<'a, 'tcx> FnCtxt<'a, 'tcx> {
                                  err: &mut DiagnosticBuilder<'_>,
                                  mut sources: Vec<CandidateSource>,
                                  sugg_span: Span| {
-            sources.sort();
+            // FIXME: cannot sort DefIds!
+            // sources.sort();
             sources.dedup();
             // Dynamic limit to avoid hiding just one candidate, which is silly.
             let limit = if sources.len() == 5 { 5 } else { 4 };
@@ -522,7 +523,7 @@ impl<'a, 'tcx> FnCtxt<'a, 'tcx> {
                                 })
                                 .collect::<Vec<_>>();
                             if !inherent_impls_candidate.is_empty() {
-                                inherent_impls_candidate.sort();
+                                // inherent_impls_candidate.sort();
                                 inherent_impls_candidate.dedup();
 
                                 // number of type to shows at most.
@@ -1113,14 +1114,14 @@ impl<'a, 'tcx> FnCtxt<'a, 'tcx> {
                 },
                 _ => false,
             });
-        let mut preds: Vec<_> = errors
+        let preds: Vec<_> = errors
             .iter()
             .filter_map(|e| match e.obligation.predicate.kind().skip_binder() {
                 ty::PredicateKind::Trait(pred) => Some(pred),
                 _ => None,
             })
             .collect();
-        preds.sort_by_key(|pred| (pred.def_id(), pred.self_ty()));
+        // preds.sort_by_key(|pred| (pred.def_id(), pred.self_ty()));
         let def_ids = preds
             .iter()
             .filter_map(|pred| match pred.self_ty().kind() {
@@ -1401,7 +1402,7 @@ impl<'a, 'tcx> FnCtxt<'a, 'tcx> {
     ) -> bool {
         if !valid_out_of_scope_traits.is_empty() {
             let mut candidates = valid_out_of_scope_traits;
-            candidates.sort();
+            // candidates.sort();
             candidates.dedup();
 
             // `TryFrom` and `FromIterator` have no methods
@@ -1630,7 +1631,7 @@ impl<'a, 'tcx> FnCtxt<'a, 'tcx> {
 
         if !candidates.is_empty() {
             // Sort from most relevant to least relevant.
-            candidates.sort_by(|a, b| a.cmp(b).reverse());
+            // candidates.sort_by(|a, b| a.cmp(b).reverse());
             candidates.dedup();
 
             let param_type = match rcvr_ty.kind() {
@@ -1885,25 +1886,10 @@ pub struct TraitInfo {
 
 impl PartialEq for TraitInfo {
     fn eq(&self, other: &TraitInfo) -> bool {
-        self.cmp(other) == Ordering::Equal
+        self.def_id == other.def_id
     }
 }
 impl Eq for TraitInfo {}
-impl PartialOrd for TraitInfo {
-    fn partial_cmp(&self, other: &TraitInfo) -> Option<Ordering> {
-        Some(self.cmp(other))
-    }
-}
-impl Ord for TraitInfo {
-    fn cmp(&self, other: &TraitInfo) -> Ordering {
-        // Local crates are more important than remote ones (local:
-        // `cnum == 0`), and otherwise we throw in the defid for totality.
-
-        let lhs = (other.def_id.krate, other.def_id);
-        let rhs = (self.def_id.krate, self.def_id);
-        lhs.cmp(&rhs)
-    }
-}
 
 /// Retrieves all traits in this crate and any dependent crates,
 /// and wraps them into `TraitInfo` for custom sorting.
