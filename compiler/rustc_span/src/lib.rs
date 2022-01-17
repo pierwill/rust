@@ -1055,8 +1055,7 @@ impl MultiSpan {
         MultiSpan { primary_spans: vec![primary_span], span_labels: vec![] }
     }
 
-    pub fn from_spans(mut vec: Vec<Span>) -> MultiSpan {
-        vec.sort();
+    pub fn from_spans(vec: Vec<Span>) -> MultiSpan {
         MultiSpan { primary_spans: vec, span_labels: vec![] }
     }
 
