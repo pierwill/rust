@@ -613,7 +613,10 @@ impl<'tcx> RegionInferenceContext<'tcx> {
         debug!("constraints={:#?}", {
             let mut constraints: Vec<_> = self.constraints.outlives().iter().collect();
             constraints.sort_by_key(|c| (c.sup, c.sub));
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7f16d0ed54b (Remove ordering traits from `rustc_borrowck::constraints::OutlivesConstraint`)
             constraints
                 .into_iter()
                 .map(|c| (c, self.constraint_sccs.scc(c.sup), self.constraint_sccs.scc(c.sub)))
