@@ -441,7 +441,8 @@ impl Ord for SpanData {
         let SpanData {
             lo: s_lo,
             hi: s_hi,
-            ctxt: s_ctxt,
+            // FIXME(pierwill): if this works, document me!
+            ctxt: _,
             // `LocalDefId` does not implement `Ord`.
             // The other fields are enough to determine in-file order.
             parent: _,
@@ -449,7 +450,8 @@ impl Ord for SpanData {
         let SpanData {
             lo: o_lo,
             hi: o_hi,
-            ctxt: o_ctxt,
+            // FIXME(pierwill): if this works, document me!
+            ctxt: _,
             // `LocalDefId` does not implement `Ord`.
             // The other fields are enough to determine in-file order.
             parent: _,
