@@ -612,7 +612,7 @@ impl<'tcx> RegionInferenceContext<'tcx> {
     fn propagate_constraints(&mut self, _body: &Body<'tcx>) {
         debug!("constraints={:#?}", {
             let mut constraints: Vec<_> = self.constraints.outlives().iter().collect();
-            constraints.sort();
+            constraints.sort_by_key(|c| (c.sup, c.sub));
             constraints
                 .into_iter()
                 .map(|c| (c, self.constraint_sccs.scc(c.sup), self.constraint_sccs.scc(c.sub)))
@@ -2163,7 +2163,7 @@ impl<'tcx> RegionInferenceContext<'tcx> {
         // is in the same SCC or something. In that case, find what
         // appears to be the most interesting point to report to the
         // user via an even more ad-hoc guess.
-        categorized_path.sort_by(|p0, p1| p0.category.cmp(&p1.category));
+        categorized_path.sort_by_key(|p| p.cause.span.data());
         debug!("best_blame_constraint: sorted_path={:#?}", categorized_path);
 
         categorized_path.remove(0)
