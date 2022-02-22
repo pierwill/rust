@@ -108,18 +108,6 @@ impl<'tcx> fmt::Debug for GenericArg<'tcx> {
     }
 }
 
-impl<'tcx> Ord for GenericArg<'tcx> {
-    fn cmp(&self, other: &GenericArg<'_>) -> Ordering {
-        self.unpack().cmp(&other.unpack())
-    }
-}
-
-impl<'tcx> PartialOrd for GenericArg<'tcx> {
-    fn partial_cmp(&self, other: &GenericArg<'_>) -> Option<Ordering> {
-        Some(self.cmp(&other))
-    }
-}
-
 impl<'tcx> From<ty::Region<'tcx>> for GenericArg<'tcx> {
     #[inline]
     fn from(r: ty::Region<'tcx>) -> GenericArg<'tcx> {
