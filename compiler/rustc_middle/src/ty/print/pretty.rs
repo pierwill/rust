@@ -1104,7 +1104,7 @@ pub trait PrettyPrinter<'tcx>:
         //
         // To avoid that causing instabilities in compiletest
         // output, sort the auto-traits alphabetically.
-        auto_traits.sort();
+        auto_traits.sort_by_key(|a| a.1);
 
         for (_, def_id) in auto_traits {
             if !first {
