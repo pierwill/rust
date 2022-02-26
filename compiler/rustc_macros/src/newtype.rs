@@ -107,7 +107,6 @@ impl Parse for Newtype {
                     body.parse::<kw::ORD_IMPL>()?;
                     body.parse::<Token![=]>()?;
                     body.parse::<kw::off>()?;
-                    try_comma()?;
                     ord = false;
                     continue;
                 }
@@ -157,6 +156,35 @@ impl Parse for Newtype {
             quote! {
                 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
             }
+        };
+
+        let step = if ord {
+            quote! {
+                impl ::std::iter::Step for #name {
+                    #[inline]
+                    fn steps_between(start: &Self, end: &Self) -> Option<usize> {
+                        <usize as ::std::iter::Step>::steps_between(
+                            &Self::index(*start),
+                            &Self::index(*end),
+                        )
+                    }
+
+                    #[inline]
+                    fn forward_checked(start: Self, u: usize) -> Option<Self> {
+                        Self::index(start).checked_add(u).map(Self::from_usize)
+                    }
+
+                    #[inline]
+                    fn backward_checked(start: Self, u: usize) -> Option<Self> {
+                        Self::index(start).checked_sub(u).map(Self::from_usize)
+                    }
+                }
+
+                // Safety: The implementation of `Step` upholds all invariants.
+                unsafe impl ::std::iter::TrustedStep for #name {}
+            }
+        } else {
+            quote! {}
         };
 
         let debug_impl = match debug_format {
@@ -270,28 +298,7 @@ impl Parse for Newtype {
                 }
             }
 
-            impl ::std::iter::Step for #name {
-                #[inline]
-                fn steps_between(start: &Self, end: &Self) -> Option<usize> {
-                    <usize as ::std::iter::Step>::steps_between(
-                        &Self::index(*start),
-                        &Self::index(*end),
-                    )
-                }
-
-                #[inline]
-                fn forward_checked(start: Self, u: usize) -> Option<Self> {
-                    Self::index(start).checked_add(u).map(Self::from_usize)
-                }
-
-                #[inline]
-                fn backward_checked(start: Self, u: usize) -> Option<Self> {
-                    Self::index(start).checked_sub(u).map(Self::from_usize)
-                }
-            }
-
-            // Safety: The implementation of `Step` upholds all invariants.
-            unsafe impl ::std::iter::TrustedStep for #name {}
+            #step
 
             impl From<#name> for u32 {
                 #[inline]
