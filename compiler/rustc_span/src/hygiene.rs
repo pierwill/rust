@@ -86,6 +86,7 @@ rustc_index::newtype_index! {
     pub struct LocalExpnId {
         ENCODABLE = custom
         DEBUG_FORMAT = "expn{}"
+        ORD_IMPL = off
     }
 }
 
