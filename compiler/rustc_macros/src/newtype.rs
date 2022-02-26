@@ -10,6 +10,8 @@ mod kw {
     syn::custom_keyword!(MAX);
     syn::custom_keyword!(ENCODABLE);
     syn::custom_keyword!(custom);
+    syn::custom_keyword!(ORD);
+    syn::custom_keyword!(off);
 }
 
 #[derive(Debug)]
@@ -58,6 +60,10 @@ impl Parse for Newtype {
                 if body.lookahead1().peek(kw::derive) {
                     body.parse::<kw::derive>()?;
                     let derives;
+                    let ord = if body.lookahead1().peek(kw::custom) {
+                        body.parse::<kw::custom>()?;
+                        ORD::off
+                    };
                     bracketed!(derives in body);
                     let derives: Punctuated<Path, Token![,]> =
                         derives.parse_terminated(Path::parse)?;
@@ -152,7 +158,7 @@ impl Parse for Newtype {
 
         Ok(Self(quote! {
             #(#attrs)*
-            #[derive(Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, #(#derive_paths),*)]
+            #[derive(#(#default_derives) #(#derive_paths),*)]
             #[rustc_layout_scalar_valid_range_end(#max)]
             #vis struct #name {
                 private: u32,

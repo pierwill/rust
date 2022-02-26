@@ -83,6 +83,7 @@ impl fmt::Debug for ExpnId {
 
 rustc_index::newtype_index! {
     /// A unique ID associated with a macro invocation and expansion.
+    #[derive(Clone, Copy, PartialEq, Eq, Hash)]
     pub struct LocalExpnId {
         ENCODABLE = custom
         DEBUG_FORMAT = "expn{}"
