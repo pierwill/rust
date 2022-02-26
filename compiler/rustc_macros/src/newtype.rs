@@ -10,6 +10,8 @@ mod kw {
     syn::custom_keyword!(MAX);
     syn::custom_keyword!(ENCODABLE);
     syn::custom_keyword!(custom);
+    syn::custom_keyword!(ORD_IMPL);
+    syn::custom_keyword!(off);
 }
 
 #[derive(Debug)]
@@ -42,6 +44,7 @@ impl Parse for Newtype {
         let mut max = None;
         let mut consts = Vec::new();
         let mut encodable = true;
+        let mut ord = true;
 
         // Parse an optional trailing comma
         let try_comma = || -> Result<()> {
@@ -100,6 +103,15 @@ impl Parse for Newtype {
                     continue;
                 }
 
+                if body.lookahead1().peek(kw::ORD_IMPL) {
+                    body.parse::<kw::ORD_IMPL>()?;
+                    body.parse::<Token![=]>()?;
+                    body.parse::<kw::off>()?;
+                    try_comma()?;
+                    ord = false;
+                    continue;
+                }
+
                 // We've parsed everything that the user provided, so we're done
                 if body.is_empty() {
                     break;
@@ -137,6 +149,16 @@ impl Parse for Newtype {
             quote! {}
         };
 
+        let default_derives = if ord {
+            quote! {
+                #[derive(Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+            }
+        } else {
+            quote! {
+                #[derive(Clone, Copy, PartialEq, Eq, Hash)]
+            }
+        };
+
         let debug_impl = match debug_format {
             DebugFormat::Custom => quote! {},
             DebugFormat::Format(format) => {
@@ -152,7 +174,8 @@ impl Parse for Newtype {
 
         Ok(Self(quote! {
             #(#attrs)*
-            #[derive(Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, #(#derive_paths),*)]
+            #default_derives
+            #[derive(#(#derive_paths),*)]
             #[rustc_layout_scalar_valid_range_end(#max)]
             #vis struct #name {
                 private: u32,
