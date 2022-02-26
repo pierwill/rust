@@ -22,6 +22,7 @@ struct PreOrderFrame<Iter> {
 }
 
 rustc_index::newtype_index! {
+        #[derive(Ord, PartialOrd)]
     struct PreorderIndex { .. }
 }
 

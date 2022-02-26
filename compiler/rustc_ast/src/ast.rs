@@ -2405,6 +2405,7 @@ pub enum AttrStyle {
 }
 
 rustc_index::newtype_index! {
+        #[derive(Ord,PartialOrd)]
     pub struct AttrId {
         ENCODABLE = custom
         DEBUG_FORMAT = "AttrId({})"

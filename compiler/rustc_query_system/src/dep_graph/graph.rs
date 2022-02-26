@@ -37,6 +37,7 @@ pub struct DepGraph<K: DepKind> {
 }
 
 rustc_index::newtype_index! {
+    #[derive(Ord,PartialOrd)]
     pub struct DepNodeIndex { .. }
 }
 
@@ -892,6 +893,7 @@ pub struct WorkProduct {
 
 // Index type for `DepNodeData`'s edges.
 rustc_index::newtype_index! {
+    #[derive(Ord,PartialOrd)]
     struct EdgeIndex { .. }
 }
 

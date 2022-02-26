@@ -1713,6 +1713,7 @@ impl fmt::Display for MacroRulesNormalizedIdent {
 pub struct Symbol(SymbolIndex);
 
 rustc_index::newtype_index! {
+        #[derive(Ord,PartialOrd)]
     struct SymbolIndex { .. }
 }
 

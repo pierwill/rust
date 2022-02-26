@@ -1018,6 +1018,7 @@ impl Abi {
 }
 
 rustc_index::newtype_index! {
+    #[derive(Ord,PartialOrd)]
     pub struct VariantIdx {
         derive [HashStable_Generic]
     }

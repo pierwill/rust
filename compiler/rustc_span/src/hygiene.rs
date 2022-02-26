@@ -62,6 +62,7 @@ pub struct SyntaxContextData {
 
 rustc_index::newtype_index! {
     /// A unique ID associated with a macro invocation and expansion.
+    #[derive(Ord, PartialOrd)]
     pub struct ExpnIndex {
         ENCODABLE = custom
     }
@@ -83,6 +84,7 @@ impl fmt::Debug for ExpnId {
 
 rustc_index::newtype_index! {
     /// A unique ID associated with a macro invocation and expansion.
+    #[derive(Ord,PartialOrd)]
     pub struct LocalExpnId {
         ENCODABLE = custom
         DEBUG_FORMAT = "expn{}"

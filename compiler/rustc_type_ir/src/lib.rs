@@ -150,6 +150,7 @@ rustc_index::newtype_index! {
     /// is the outer fn.
     ///
     /// [dbi]: https://en.wikipedia.org/wiki/De_Bruijn_index
+    #[derive(PartialOrd)]
     pub struct DebruijnIndex {
         DEBUG_FORMAT = "DebruijnIndex({})",
         const INNERMOST = 0,
@@ -343,6 +344,7 @@ pub struct FloatVarValue(pub FloatTy);
 
 rustc_index::newtype_index! {
     /// A **ty**pe **v**ariable **ID**.
+    #[derive(Ord, PartialOrd)]
     pub struct TyVid {
         DEBUG_FORMAT = "_#{}t"
     }

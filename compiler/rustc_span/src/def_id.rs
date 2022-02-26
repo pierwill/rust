@@ -10,6 +10,7 @@ use std::fmt;
 use std::hash::{Hash, Hasher};
 
 rustc_index::newtype_index! {
+    #[derive(Ord, PartialOrd)]
     pub struct CrateNum {
         ENCODABLE = custom
         DEBUG_FORMAT = "crate{}"
@@ -192,6 +193,7 @@ rustc_index::newtype_index! {
     /// A DefIndex is an index into the hir-map for a crate, identifying a
     /// particular definition. It should really be considered an interned
     /// shorthand for a particular DefPath.
+    #[derive(Ord,PartialOrd)]
     pub struct DefIndex {
         ENCODABLE = custom // (only encodable in metadata)
 

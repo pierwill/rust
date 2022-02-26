@@ -152,7 +152,7 @@ impl Parse for Newtype {
 
         Ok(Self(quote! {
             #(#attrs)*
-            #[derive(Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, #(#derive_paths),*)]
+            #[derive(Clone, Copy, PartialEq, Eq, Hash, #(#derive_paths),*)]
             #[rustc_layout_scalar_valid_range_end(#max)]
             #vis struct #name {
                 private: u32,
