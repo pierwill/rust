@@ -1,3 +1,4 @@
+#![deny(missing_docs)]
 #![feature(rustc_private, decl_macro)]
 #![cfg_attr(feature = "jit", feature(never_type, vec_into_raw_parts, once_cell))]
 #![warn(rust_2018_idioms)]
