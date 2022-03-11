@@ -56,6 +56,7 @@ impl<'a> Visitor<'a> for ShowSpanVisitor<'a> {
     }
 }
 
+/// Runs an error handler.
 pub fn run(span_diagnostic: &rustc_errors::Handler, mode: &str, krate: &ast::Crate) {
     let Ok(mode) = mode.parse() else {
         return;

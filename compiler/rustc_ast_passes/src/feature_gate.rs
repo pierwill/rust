@@ -1,3 +1,6 @@
+//! AST checks related to [`feature` attributes].
+//!
+//! [`feature` attributes]: https://doc.rust-lang.org/unstable-book/index.html
 use rustc_ast as ast;
 use rustc_ast::visit::{self, AssocCtxt, FnCtxt, FnKind, Visitor};
 use rustc_ast::{AssocConstraint, AssocConstraintKind, NodeId};
@@ -46,6 +49,7 @@ macro_rules! gate_feature_post {
     };
 }
 
+/// Checks an attribute .
 pub fn check_attribute(attr: &ast::Attribute, sess: &Session, features: &Features) {
     PostExpansionVisitor { sess, features }.visit_attribute(attr)
 }
@@ -746,6 +750,7 @@ impl<'a> Visitor<'a> for PostExpansionVisitor<'a> {
     }
 }
 
+/// Checks a crate's AST for feature-gated code.
 pub fn check_crate(krate: &ast::Crate, sess: &Session) {
     maybe_stage_features(sess, krate);
     check_incompatible_features(sess);

@@ -1,15 +1,18 @@
-// Simply gives a rough count of the number of nodes in an AST.
+//! Simply gives a rough count of the number of nodes in an AST.
 
 use rustc_ast::visit::*;
 use rustc_ast::*;
 use rustc_span::symbol::Ident;
 use rustc_span::Span;
 
+/// Counter for AST nodes.
 pub struct NodeCounter {
+    #[allow(missing_docs)]
     pub count: usize,
 }
 
 impl NodeCounter {
+    /// Creates a new counter starting at 0.
     pub fn new() -> NodeCounter {
         NodeCounter { count: 0 }
     }

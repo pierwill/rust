@@ -1,10 +1,10 @@
-// Validate AST before lowering it to HIR.
-//
-// This pass is supposed to catch things that fit into AST data structures,
-// but not permitted by the language. It runs after expansion when AST is frozen,
-// so it can check for erroneous constructions produced by syntax extensions.
-// This pass is supposed to perform only simple checks not requiring name resolution
-// or type checking or some other kind of complex analysis.
+//! Validate AST before lowering it to HIR.
+//!
+//! This pass is supposed to catch things that fit into AST data structures,
+//! but not permitted by the language. It runs after expansion when AST is frozen,
+//! so it can check for erroneous constructions produced by syntax extensions.
+//! This pass is supposed to perform only simple checks not requiring name resolution
+//! or type checking or some other kind of complex analysis.
 
 use itertools::{Either, Itertools};
 use rustc_ast::ptr::P;
@@ -1778,6 +1778,7 @@ fn deny_equality_constraints(
     err.emit();
 }
 
+/// Runs the AST validation checks.
 pub fn check_crate(session: &Session, krate: &Crate, lints: &mut LintBuffer) -> bool {
     let mut validator = AstValidator {
         session,
