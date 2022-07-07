@@ -1379,7 +1379,7 @@ impl<'tcx> MirPass<'tcx> for StateTransform {
             },
         );
 
-        let always_live_locals = storage::always_live_locals(&body);
+        let always_live_locals = storage::always_storage_live_locals(&body);
 
         let liveness_info =
             locals_live_across_suspend_points(tcx, body, &always_live_locals, movable);
